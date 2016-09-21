@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "microscopic-utils": "file:../microscopic-utils"
+    "microscopic-utils": "microscopic/microscopic-utils"
   },
   "devDependencies": {
     "chai": "^3.5.0",
