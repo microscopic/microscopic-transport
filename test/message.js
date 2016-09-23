@@ -17,11 +17,10 @@ describe('Message', () => {
       expect(message.id).to.not.be.equal(message1.id)
     })
 
-    it('should set timeout', () => {
+    it('should set content', () => {
       const message = new Message({}, { a: 1, b: 2 }, () => 1)
 
-      expect(message.timeout).to.not.be.undefined
-      expect(message.timeout._idleTimeout).to.not.be.undefined
+      expect(message.content).to.be.deep.equal({ a: 1, b: 2 })
     })
 
     it('timeout should delete message from `Messager`', () => {
@@ -32,7 +31,7 @@ describe('Message', () => {
 
       const message = new Message(messagerMock, { a: 1, b: 2 }, callbackSpy)
 
-      clock.tick(5000)
+      clock.tick(180 * 1000)
 
       expect(messagerMock.deleteMessage.calledWith(message.id)).to.be.true
       expect(callbackSpy.called).to.be.false
@@ -69,10 +68,21 @@ describe('Message', () => {
 
   describe('clearTimeout', () => {
     it('should clear timeout', () => {
-      const message = new Message({}, { a: 1, b: 2 }, () => 1)
+      const clock = sinon.useFakeTimers()
+
+      const messagerMock = { deleteMessage: sinon.spy() }
+      const callbackSpy = sinon.spy()
+
+      const message = new Message(messagerMock, { a: 1, b: 2 }, callbackSpy)
+
       message.clearTimeout()
 
-      expect(message.timeout[ '0' ]).to.be.null
+      clock.tick(180 * 1000)
+
+      expect(messagerMock.deleteMessage.called).to.be.false
+      expect(callbackSpy.called).to.be.false
+
+      clock.restore()
     })
   })
 
